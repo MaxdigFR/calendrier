@@ -116,7 +116,7 @@
             const mSelect = document.getElementById('monthSelect');
             const now = new Date();
             months.forEach((m, i) => {
-                const opt = document.assign(document.createElement('option'), {value: i, text: m, selected: i === now.getMonth()});
+                const opt = object.assign(document.createElement('option'), {value: i, text: m, selected: i === now.getMonth()});
                 mSelect.appendChild(opt);
             });
             document.getElementById('yearSelect').value = now.getFullYear();
