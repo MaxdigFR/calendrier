@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier Financier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; }
+        .calendar-day { min-height: 120px; padding: 4px; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; background-color: white; }
+        .event-tag { font-size: 0.65rem; padding: 3px 5px; border-radius: 4px; margin-top: 2px; font-weight: 600; line-height: 1.1; border-left: 3px solid; }
+        
+        /* Couleurs par type de rapport */
+        .tag-quarter { background-color: #f0f9ff; color: #0369a1; border-color: #0ea5e9; }
+        .tag-half { background-color: #eef2ff; color: #3730a3; border-color: #6366f1; }
+        .tag-annual { background-color: #fffbeb; color: #92400e; border-color: #f59e0b; }
+        .is-prediction { border-style: dashed !important; background-color: transparent !important; }
+        .other-month { background-color: #f8fafc; color: #cbd5e1; }
+    </style>
+</head>
+<body class="p-2 md:p-6">
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="p-4 border-b bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-slate-800 tracking-tight">Calendrier de Veille</h1>
+                <p id="status" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1 italic">Initialisation...</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="changeMonth(-1)" class="p-2 border rounded bg-white hover:bg-slate-50 shadow-sm"><i class="fas fa-chevron-left"></i></button>
+                <select id="monthSelect" onchange="updateCalendar()" class="border rounded px-2 py-1 font-bold text-slate-700 bg-white"></select>
+                <select id="yearSelect" onchange="updateCalendar()" class="border rounded px-2 py-1 font-bold text-slate-700 bg-white">
+                    <option value="2026">2026</option><option value="2027">2027</option>
+                </select>
+                <button onclick="changeMonth(1)" class="p-2 border rounded bg-white hover:bg-slate-50 shadow-sm"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-7 bg-slate-100 text-center font-bold text-slate-400 text-[10px] py-2 uppercase tracking-widest">
+            <div>Lun</div><div>Mar</div><div>Mer</div><div>Jeu</div><div>Ven</div><div>Sam</div><div>Dim</div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        
+        <div class="p-4 bg-slate-50 border-t flex flex-wrap gap-4 text-[9px] font-bold uppercase text-slate-500">
+            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-100 border-l-2 border-blue-500 rounded"></span> Trimestriel</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-indigo-100 border-l-2 border-indigo-500 rounded"></span> Semestriel</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-amber-100 border-l-2 border-amber-500 rounded"></span> Annuel</div>
+            <div class="flex items-center gap-2 italic"><span class="w-3 h-3 border border-dashed border-slate-400 rounded"></span> Pointillés = Estimé</div>
+        </div>
+    </div>
+
+    <script>
+        // --- COLLE TON LIEN CSV ICI ---
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9gtHdbat6EoT9hRgWVFSA1cHMbOf6VaVH8--KcE0elf8H-3_9JPx2pIDLc5LpQMH2eXFUmqrz15AD/pub?output=csv"; 
+        
+        let earningsData = [];
+        const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+
+        async function loadData() {
+            try {
+                if(SHEET_CSV_URL === "TON LIEN ICI") {
+                    document.getElementById('status').textContent = "⚠️ Veuillez configurer le lien CSV";
+                    return;
+                }
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                earningsData = rows.map(row => {
+                    const cols = row.split(',');
+                    if (cols.length < 5) return null;
+                    return { 
+                        date: cols[0].trim(), company: cols[1].trim(), type: cols[2].trim(), 
+                        isPrediction: cols[3].trim().toUpperCase() === "TRUE", class: cols[4].trim() 
+                    };
+                }).filter(e => e);
+                document.getElementById('status').textContent = "● Synchronisation Live Active";
+                updateCalendar();
+            } catch (e) {
+                document.getElementById('status').textContent = "Erreur de connexion Drive";
+            }
+        }
+
+        function updateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            const m = parseInt(document.getElementById('monthSelect').value);
+            const y = parseInt(document.getElementById('yearSelect').value);
+            
+            const firstDay = (new Date(y, m, 1).getDay() + 6) % 7;
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            
+            for (let i = 0; i < firstDay; i++) {
+                grid.appendChild(Object.assign(document.createElement('div'), {className: "calendar-day other-month"}));
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDiv = Object.assign(document.createElement('div'), {className: "calendar-day"});
+                dayDiv.innerHTML = `<div class="font-bold text-xs text-slate-400 mb-1">${i}</div>`;
+                const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                
+                earningsData.filter(e => e.date === dateStr).forEach(e => {
+                    const labelText = e.isPrediction ? `${e.type} <span class="text-[8px] font-normal block opacity-80">(Prév.)</span>` : e.type;
+                    const t = Object.assign(document.createElement('div'), {
+                        className: `event-tag ${e.class} ${e.isPrediction ? 'is-prediction' : ''}`,
+                        innerHTML: `<div class="truncate">${e.company}</div><div class="opacity-70 font-normal text-[8px] truncate">${labelText}</div>`
+                    });
+                    dayDiv.appendChild(t);
+                });
+                grid.appendChild(dayDiv);
+            }
+        }
+
+        function init() {
+            const mSelect = document.getElementById('monthSelect');
+            const now = new Date();
+            months.forEach((m, i) => {
+                const opt = document.assign(document.createElement('option'), {value: i, text: m, selected: i === now.getMonth()});
+                mSelect.appendChild(opt);
+            });
+            document.getElementById('yearSelect').value = now.getFullYear();
+            loadData();
+        }
+
+        function changeMonth(d) {
+            let m = parseInt(document.getElementById('monthSelect').value) + d;
+            let y = parseInt(document.getElementById('yearSelect').value);
+            if (m > 11) { m = 0; y++; } else if (m < 0) { m = 11; y--; }
+            document.getElementById('monthSelect').value = m;
+            document.getElementById('yearSelect').value = y;
+            updateCalendar();
+        }
+
+        init();
+    </script>
+</body>
+</html>
