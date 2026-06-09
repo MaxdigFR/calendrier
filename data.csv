@@ -1,0 +1,41 @@
+date,company,type,isPrediction,class
+2026-07-13,Kongsberg Gruppen,H1 Résultats,FALSE,tag-half
+2026-07-22,Dassault Aviation,H1 Résultats,FALSE,tag-half
+2026-07-22,ServiceNow,Q2 Résultats,FALSE,tag-quarter
+2026-07-23,Relx,H1 Résultats,FALSE,tag-half
+2026-07-23,Thalès,H1 Résultats,FALSE,tag-half
+2026-07-23,Dassault Systèmes,Q2 Résultats,FALSE,tag-quarter
+2026-07-23,TotalEnergies,Q2 Résultats,FALSE,tag-quarter
+2026-07-24,W.P. Carey,Q2 Résultats,TRUE,tag-quarter
+2026-07-24,Veralto,Q2 Résultats,TRUE,tag-quarter
+2026-07-28,Microsoft,Q4 Fiscal 2026,FALSE,tag-quarter
+2026-07-28,Air Liquide,H1 Résultats,FALSE,tag-half
+2026-07-29,Amazon,Q2 Résultats,FALSE,tag-quarter
+2026-07-29,Vinci,H1 Résultats,FALSE,tag-half
+2026-07-29,EPR Properties,Q2 Résultats,TRUE,tag-quarter
+2026-07-29,Danone,H1 Résultats,FALSE,tag-half
+2026-07-29,Covivio,H1 Résultats,TRUE,tag-half
+2026-07-30,Schneider Electric,H1 Résultats,FALSE,tag-half
+2026-07-30,Allied Properties REIT,Q2 Résultats,TRUE,tag-quarter
+2026-07-30,LFDJ,H1 Résultats,TRUE,tag-half
+2026-07-31,Prosus,FY2026 Annuels,FALSE,tag-annual
+2026-08-03,Berkshire Hathaway,Q2 Résultats,FALSE,tag-quarter
+2026-08-03,AXA,H1 Résultats,TRUE,tag-half
+2026-08-04,Agree Realty,Q2 Résultats,TRUE,tag-quarter
+2026-08-05,ABInbev,Q2 Résultats,TRUE,tag-quarter
+2026-08-06,Healthpeak Properties,Q2 Résultats,TRUE,tag-quarter
+2026-08-07,Bolloré SA,H1 Résultats,TRUE,tag-half
+2026-09-03,Sofina,H1 Résultats,TRUE,tag-half
+2026-09-08,Rubis,H1 Résultats,FALSE,tag-half
+2026-09-15,Exor,H1 Résultats,TRUE,tag-half
+2026-09-25,Indépendance & Expansion,Rapport Annuel,TRUE,tag-annual
+2026-10-20,Microsoft,Q1 Fiscal 2027,TRUE,tag-quarter
+2026-10-22,Vinci,Q3 Activité,TRUE,tag-quarter
+2026-10-22,Air Liquide,Q3 Chiffre d'Affaires,TRUE,tag-quarter
+2026-10-23,TotalEnergies,Q3 Résultats,TRUE,tag-quarter
+2026-10-27,Moody's,Q3 Résultats,TRUE,tag-quarter
+2026-10-28,Danone,Q3 Activité,TRUE,tag-quarter
+2026-10-28,Danaher Corp,Q3 Résultats,TRUE,tag-quarter
+2026-10-29,Investor AB,Q3 Résultats,TRUE,tag-quarter
+2026-10-29,Kongsberg Gruppen,Q3 Résultats,FALSE,tag-quarter
+2026-11-05,ServiceNow,Q3 Résultats,TRUE,tag-quarter
